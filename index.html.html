@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гримуар Судьбы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0a;
+            font-family: 'Crimson Text', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at center, rgba(20, 15, 10, 0.9) 0%, rgba(5, 5, 5, 1) 100%);
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23ffffff' stroke-width='0.3' opacity='0.03'/%3E%3C/svg%3E");
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .frame {
+            position: relative;
+            padding: 3rem 2rem;
+            border: 1px solid rgba(180, 150, 100, 0.3);
+        }
+
+        .frame::before,
+        .frame::after {
+            content: '✧';
+            position: absolute;
+            font-size: 1.2rem;
+            color: rgba(180, 150, 100, 0.5);
+        }
+
+        .frame::before { top: -0.6rem; left: 50%; transform: translateX(-50%); }
+        .frame::after { bottom: -0.6rem; left: 50%; transform: translateX(-50%); }
+
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: rgba(180, 150, 100, 0.4);
+            border-style: solid;
+        }
+
+        .corner-tl { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+        .corner-tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+        .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+        .corner-br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            font-weight: 600;
+            color: rgba(180, 150, 100, 0.9);
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .divider {
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(180, 150, 100, 0.5), transparent);
+            margin: 1rem auto;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(180, 150, 100, 0.5);
+            font-style: italic;
+            letter-spacing: 0.15em;
+            margin-bottom: 2rem;
+        }
+
+        .input-container {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .question-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-family: 'Crimson Text', serif;
+            background: rgba(180, 150, 100, 0.03);
+            border: 1px solid rgba(180, 150, 100, 0.2);
+            color: rgba(220, 200, 170, 0.9);
+            outline: none;
+            transition: all 0.4s ease;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        .question-input::placeholder {
+            color: rgba(180, 150, 100, 0.3);
+            font-style: italic;
+        }
+
+        .question-input:focus {
+            border-color: rgba(180, 150, 100, 0.5);
+            background: rgba(180, 150, 100, 0.05);
+        }
+
+        .circle-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 2rem;
+            cursor: pointer;
+        }
+
+        .outer-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(180, 150, 100, 0.3);
+            border-radius: 50%;
+            animation: rotateCircle 60s linear infinite;
+        }
+
+        .outer-circle::before {
+            content: '☉ ☽ ☿ ♀ ♂ ♃ ♄';
+            position: absolute;
+            top: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            letter-spacing: 0.8em;
+            color: rgba(180, 150, 100, 0.4);
+            white-space: nowrap;
+        }
+
+        @keyframes rotateCircle {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .inner-circle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            border: 1px solid rgba(180, 150, 100, 0.25);
+            border-radius: 50%;
+            animation: rotateCircle 40s linear infinite reverse;
+        }
+
+        .core-circle {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            width: calc(100% - 80px);
+            height: calc(100% - 80px);
+            border: 1px solid rgba(180, 150, 100, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, rgba(20, 15, 10, 0.8) 0%, rgba(10, 10, 10, 1) 100%);
+        }
+
+        .triangle {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .triangle-up {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70%);
+            border-width: 0 30px 50px 30px;
+            border-color: transparent transparent rgba(180, 150, 100, 0.1) transparent;
+        }
+
+        .triangle-down {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -30%);
+            border-width: 50px 30px 0 30px;
+            border-color: rgba(180, 150, 100, 0.1) transparent transparent transparent;
+        }
+
+        .answer-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: rgba(180, 150, 100, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            transition: all 0.8s ease;
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .answer-text.revealed {
+            color: rgba(220, 200, 170, 1);
+            text-shadow: 0 0 20px rgba(180, 150, 100, 0.5);
+        }
+
+        .answer-text.yes {
+            color: rgba(180, 200, 150, 1);
+            text-shadow: 0 0 20px rgba(180, 200, 150, 0.4);
+        }
+
+        .answer-text.no {
+            color: rgba(200, 150, 140, 1);
+            text-shadow: 0 0 20px rgba(200, 150, 140, 0.4);
+        }
+
+        .circle-container.thinking .outer-circle {
+            animation: rotateCircle 2s linear infinite;
+        }
+
+        .circle-container.thinking .inner-circle {
+            animation: rotateCircle 1.5s linear infinite reverse;
+        }
+
+        .circle-container.thinking .answer-text {
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .invoke-btn {
+            padding: 0.8rem 2.5rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: transparent;
+            border: 1px solid rgba(180, 150, 100, 0.4);
+            color: rgba(180, 150, 100, 0.8);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .invoke-btn:hover {
+            background: rgba(180, 150, 100, 0.1);
+            border-color: rgba(180, 150, 100, 0.6);
+            color: rgba(220, 200, 170, 1);
+        }
+
+        .invoke-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .latin {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: rgba(180, 150, 100, 0.25);
+            font-style: italic;
+            letter-spacing: 0.1em;
+        }
+
+        .stats {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            color: rgba(180, 150, 100, 0.4);
+            z-index: 20;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-symbol {
+            font-size: 1rem;
+        }
+
+        .history {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 20;
+        }
+
+        .history-mark {
+            width: 8px;
+            height: 8px;
+            border: 1px solid;
+            transform: rotate(45deg);
+            opacity: 0.6;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .history-mark.yes {
+            border-color: rgba(180, 200, 150, 0.8);
+            background: rgba(180, 200, 150, 0.2);
+        }
+
+        .history-mark.no {
+            border-color: rgba(200, 150, 140, 0.8);
+            background: rgba(200, 150, 140, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: rotate(45deg) scale(0); }
+            to { opacity: 0.6; transform: rotate(45deg) scale(1); }
+        }
+
+        .runes {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: rgba(180, 150, 100, 0.15);
+            writing-mode: vertical-rl;
+            letter-spacing: 0.5em;
+            z-index: 1;
+        }
+
+        .runes-left { left: 2rem; }
+        .runes-right { right: 2rem; }
+
+        @media (max-width: 600px) {
+            .frame { padding: 2rem 1.5rem; }
+            .circle-container { width: 200px; height: 200px; }
+            .answer-text { font-size: 1.2rem; }
+            .runes { display: none; }
+            .history { right: 1rem; }
+            .stats { bottom: 1rem; gap: 2rem; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="runes runes-left">ᚠᚢᚦᚨᚱᚲ</div>
+    <div class="runes runes-right">ᚷᚹᚺᚾᛁᛃ</div>
+
+    <div class="container">
+        <div class="frame">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+
+            <h1>Гримуар Судьбы</h1>
+            <div class="divider"></div>
+            <p class="subtitle">Древнее искусство прорицания</p>
+
+            <div class="input-container">
+                <input type="text" class="question-input" placeholder="Изложите свой вопрос..." id="questionInput">
+            </div>
+
+            <div class="circle-container" id="circleContainer">
+                <div class="outer-circle"></div>
+                <div class="inner-circle"></div>
+                <div class="triangle triangle-up"></div>
+                <div class="triangle triangle-down"></div>
+                <div class="core-circle">
+                    <div class="answer-text" id="answerText">⍟</div>
+                </div>
+            </div>
+
+            <button class="invoke-btn" id="invokeBtn">Призвать ответ</button>
+
+            <p class="latin">Sic itur ad astra</p>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <span class="stat-symbol">☉</span>
+            <span>Истина: <span id="yesCount">0</span></span>
+        </div>
+        <div class="stat">
+            <span class="stat-symbol">☽</span>
+            <span>Отказ: <span id="noCount">0</span></span>
+        </div>
+    </div>
+
+    <div class="history" id="history"></div>
+
+    <script>
+        const circleContainer = document.getElementById('circleContainer');
+        const answerText = document.getElementById('answerText');
+        const invokeBtn = document.getElementById('invokeBtn');
+        const questionInput = document.getElementById('questionInput');
+        const historyContainer = document.getElementById('history');
+        const yesCountEl = document.getElementById('yesCount');
+        const noCountEl = document.getElementById('noCount');
+
+        let isThinking = false;
+        let yesCount = 0;
+        let noCount = 0;
+
+        const yesAnswers = [
+            'Истина', 'Да', 'Верно', 'Быть посему', 
+            'Так тому и быть', 'Свершится', 'Суждено',
+            'Предначертано', 'Благословенно'
+        ];
+
+        const noAnswers = [
+            'Ложь', 'Нет', 'Неверно', 'Отвергнуто', 
+            'Не суждено', 'Воспрещено', 'Отказано',
+            'Не свершится', 'Запечатано'
+        ];
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function invoke() {
+            if (isThinking) return;
+            
+            isThinking = true;
+            invokeBtn.disabled = true;
+            circleContainer.classList.add('thinking');
+            answerText.classList.remove('revealed', 'yes', 'no');
+            answerText.textContent = '···';
+
+            const thinkTime = 2000 + Math.random() * 1500;
+
+            setTimeout(() => {
+                const isYes = Math.random() > 0.5;
+                
+                circleContainer.classList.remove('thinking');
+                answerText.classList.add('revealed', isYes ? 'yes' : 'no');
+                answerText.textContent = getRandomItem(isYes ? yesAnswers : noAnswers);
+
+                if (isYes) {
+                    yesCount++;
+                    yesCountEl.textContent = yesCount;
+                } else {
+                    noCount++;
+                    noCountEl.textContent = noCount;
+                }
+
+                const mark = document.createElement('div');
+                mark.className = `history-mark ${isYes ? 'yes' : 'no'}`;
+                historyContainer.appendChild(mark);
+
+                while (historyContainer.children.length > 12) {
+                    historyContainer.removeChild(historyContainer.firstChild);
+                }
+
+                isThinking = false;
+                invokeBtn.disabled = false;
+            }, thinkTime);
+        }
+
+        invokeBtn.addEventListener('click', invoke);
+        circleContainer.addEventListener('click', invoke);
+        
+        questionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') invoke();
+        });
+    </script>
+</body>
+</html>
